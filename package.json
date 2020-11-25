@@ -1,0 +1,32 @@
+{
+  "name": "anestech-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GabrielCC163/anestech-api.git"
+  },
+  "keywords": [],
+  "author": "Gabriel Brum Rodrigues",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GabrielCC163/anestech-api/issues"
+  },
+  "homepage": "https://github.com/GabrielCC163/anestech-api#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.2",
+    "express": "^4.17.1",
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.3.5"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "nodemon": "^2.0.6"
+  }
+}
