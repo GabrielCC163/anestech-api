@@ -11,6 +11,22 @@ module.exports = {
     }
   },
 
+  async show(req, res) {
+    const { user_id } = req.params;
+    try {
+      const user = await User.findByPk(user_id);
+
+      if (!user) {
+        return res.status(404).json({ error: "user not found" });
+      }
+
+      return res.json(user);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: "failed to fetch user" });
+    }
+  },
+
   async store(req, res) {
     const { name, email, role } = req.body;
 

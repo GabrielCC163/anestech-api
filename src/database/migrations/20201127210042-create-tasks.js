@@ -18,15 +18,23 @@ module.exports = {
         defaultValue: "OPEN",
         allowNull: false,
       },
+      user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: "users",
+          key: "id",
+        },
+        onUpdate: "CASCADE", //when there is some change on the User id
+        onDelete: "SET NULL", //set null to user_id when User is deleted
+      },
       started_at: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
-        allowNull: false,
+        allowNull: true,
       },
       ended_at: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
-        allowNull: false,
+        allowNull: true,
       },
       created_at: {
         type: Sequelize.DATE,
