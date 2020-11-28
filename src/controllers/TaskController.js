@@ -4,34 +4,77 @@ const Task = require("../models/Task");
 // tasks (description, user, status (OPEN, IN_PROGRESS, DONE), started_at, ended_at, created_at)
 
 //     crud
-//         read filter: description, status[]
+//         read filter: description, status[] = OK
 //         read order: user, status, created_at
 //     checkin
 //     checkout
 
 module.exports = {
   async index(req, res) {
-    //Query with Filter
-    // eq (equal) *default, in (inside), nin (not inside), neq (not equal), gt (greater then), gte (greater or equal to), lt (less then), and lte (less or equal to), sw (starts with), ew (ends with)
-    //NAME: description VALUE: study node
-    //NAME: description[sw] VALUE: study
-    //NAME: status VALUE: OPEN
-    //NAME: status[in] VALUE: OPEN,IN_PROGRESS
-    //Query with Order
-    //asc () *default, desc
-    //NAME: order VALUE: user
-    //NAME: order[desc] VALUE: created_at
-    //NAME: order VALUE: status
-    //you can use multiple filters with orders at the same time
     const { description, status, order } = req.query;
 
+    const options = {};
+
     if (description) {
+      options.description = {
+        [Op.substring]: description,
+      };
+    }
+
+    if (status) {
+      if (status.includes(",")) {
+        options.status = status.split(",").map((st) => st.trim());
+      } else if (status.includes(";")) {
+        options.status = status.split(";").map((st) => st.trim());
+      } else {
+        options.status = status;
+      }
+    }
+
+    const orderOptions = [];
+
+    if (order) {
+      let orderValues = [];
+
+      if (order.includes(",")) {
+        orderValues = order.split(",").map((od) => od.trim());
+      } else if (order.includes(";")) {
+        orderValues = order.split(";").map((od) => od.trim());
+      } else {
+        const value = order.replace(/-/g, "").replace(/\+/g, "");
+        if (order.includes("-")) {
+          orderOptions.push([value, "DESC"]);
+        } else {
+          orderOptions.push([value]);
+        }
+      }
+
+      if (orderValues.length) {
+        orderValues.forEach((el) => {
+          const value = el.replace(/-/g, "").replace(/\+/g, "");
+
+          if (el.includes("-")) {
+            orderOptions.push([value, "DESC"]);
+          } else {
+            orderOptions.push([value]);
+          }
+        });
+      }
     }
 
     try {
-      const tasks = await Task.findAll().where({
-        status: "OPEN",
+      const tasks = await Task.findAll({
+        attributes: { exclude: ["id", "createdAt", "updatedAt", "user_id"] },
+        where: options,
+        order: orderOptions,
+        include: [
+          {
+            association: "user",
+            attributes: ["name", "email"],
+          },
+        ],
       });
+
       return res.json(tasks);
     } catch (error) {
       console.log(error);
@@ -80,7 +123,7 @@ module.exports = {
     try {
       const result = await Task.destroy({
         where: {
-          id: user_id,
+          id: task_id,
         },
       });
 
@@ -122,6 +165,32 @@ module.exports = {
       console.log(error);
       return res.status(500).json({
         error: 'failed to update task, try again with another "email"',
+      });
+    }
+  },
+
+  async checkin(req, res) {
+    const { task_id } = req.params;
+
+    const { user_id } = req.body;
+
+    try {
+      const result = await Task.update(
+        { user_id },
+        {
+          where: {
+            id: task_id,
+          },
+        }
+      );
+
+      return result[0]
+        ? res.send()
+        : res.status(404).json({ error: "task not found" });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        error: "failed to check-in",
       });
     }
   },

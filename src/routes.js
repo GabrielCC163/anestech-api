@@ -11,7 +11,11 @@ routes.get("/users", UserController.index);
 routes.put("/users/:user_id", UserController.update);
 routes.delete("/users/:user_id", UserController.delete);
 
-routes.get("/tasks", TaskController.index);
 routes.post("/tasks", TaskController.store);
+routes.get("/tasks/:task_id", TaskController.show);
+routes.get("/tasks", TaskController.index);
+routes.delete("/tasks/:task_id", TaskController.delete);
+
+routes.patch("/tasks/:task_id/checkin", TaskController.checkin);
 
 module.exports = routes;
