@@ -18,16 +18,26 @@ roles
 
 users (name, email, role, \*password)
 
-    crud (only by users)
+    crud (only by admin users)
         inserted: superadmin*
 
 indicators
 
     filters: dt_start, dt_end
     -> number of ended tasks
+       -> 50
     -> avg of tasks ended by user
+       -> userX, avg
+       -> userY, avg
+       ...
     -> avg time spent between OPEN and DOING of tasks
+       -> taskX, avg
+       -> taskY, avg
+       ...
     -> avg time spent between DOING and DONE of tasks.
+       -> taskX, avg
+       -> taskY, avg
+       ...
 
 # Anestech - Task Management API
 
@@ -37,12 +47,13 @@ indicators
 
 ## Initialization
 
-- Clone the repository and install the dependencies:
+- Clone the repository, install the dependencies and set up .env file:
 
   ```bash
     $ git clone
     $ cd anestech-api
     $ yarn install
+    $ mv .env-sample .env
   ```
 
 - Start the database:

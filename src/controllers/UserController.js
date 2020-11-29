@@ -1,9 +1,14 @@
+const Task = require("../models/Task");
 const User = require("../models/User");
 
 module.exports = {
   async index(req, res) {
     try {
-      const users = await User.findAll();
+      const users = await User.findAll({
+        attributes: {
+          exclude: ["password", "createdAt", "updatedAt"],
+        },
+      });
       return res.json(users);
     } catch (error) {
       console.log(error);
@@ -24,27 +29,6 @@ module.exports = {
     } catch (error) {
       console.log(error);
       return res.status(500).json({ error: "failed to fetch user" });
-    }
-  },
-
-  async store(req, res) {
-    const { name, email, role } = req.body;
-
-    if (!name || !email) {
-      return res
-        .status(400)
-        .json({ error: '"name" and "email" params are required' });
-    }
-
-    try {
-      const user = await User.create({ name, email, role });
-
-      return res.json(user);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        error: "failed to created user, try again with another email",
-      });
     }
   },
 
@@ -96,6 +80,25 @@ module.exports = {
       console.log(error);
       return res.status(500).json({
         error: 'failed to update user, try again with another "email"',
+      });
+    }
+  },
+
+  async userTasks(req, res) {
+    const { user_id } = req.params;
+    try {
+      const tasks = await Task.findAll({
+        where: {
+          user_id,
+        },
+        order: ["createdAt"],
+      });
+
+      return res.json(tasks);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        error: "failed to fetch user tasks",
       });
     }
   },

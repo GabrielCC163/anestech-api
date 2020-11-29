@@ -18,9 +18,13 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
-      role: {
+      password: {
         type: Sequelize.STRING,
-        defaultValue: "AGENT",
+        allowNull: false,
+      },
+      role: {
+        type: Sequelize.ENUM("admin", "agent"),
+        defaultValue: "agent",
         allowNull: false,
       },
       created_at: {

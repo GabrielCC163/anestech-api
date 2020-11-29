@@ -86,12 +86,12 @@ module.exports = {
 
     try {
       const tasks = await Task.findAll({
-        attributes: { exclude: ["id", "createdAt", "updatedAt", "user_id"] },
+        attributes: { exclude: ["createdAt", "updatedAt", "user_id"] },
         where: options,
         include: [
           {
             association: "user",
-            attributes: ["name", "email"],
+            attributes: ["id", "name", "email"],
           },
         ],
         order: orderOptions,
@@ -106,6 +106,7 @@ module.exports = {
 
   async show(req, res) {
     const { task_id } = req.params;
+
     try {
       const task = await Task.findByPk(task_id);
 
@@ -124,7 +125,9 @@ module.exports = {
     const { description } = req.body;
 
     if (!description) {
-      return res.status(400).json({ error: '"description" param is required' });
+      return res
+        .status(400)
+        .json({ error: '"description" body param is required' });
     }
 
     try {
@@ -162,17 +165,11 @@ module.exports = {
 
   async update(req, res) {
     const { task_id } = req.params;
-    const { name, email, role } = req.body;
-
-    if (role && role !== "AGENT" && role !== "ADMIN") {
-      return res
-        .status(400)
-        .json({ error: 'the "role" field should be "AGENT" or "ADMIN"' });
-    }
+    const { description, status, user_id, started_at, ended_at } = req.body;
 
     try {
       const result = await Task.update(
-        { name, email, role },
+        { description, status, user_id, started_at, ended_at },
         {
           where: {
             id: task_id,
@@ -186,22 +183,25 @@ module.exports = {
     } catch (error) {
       console.log(error);
       return res.status(500).json({
-        error: 'failed to update task, try again with another "email"',
+        error: "failed to update task",
       });
     }
   },
 
   /**
-   * Assign a user to a task and starts it.
-   * Replaces the user and reset "started_at" if already started.
-   * Can't start a task already ended.
-   * If the user logged in is a ADMIN, then he can assign any user to the task.
-   * Otherwise, an AGENT can only assign himself to the task.
+   * Assign a user (must be logged in) to a task and starts it.
+   * Can't start a task already ended or assigned to a user.
    */
   async checkin(req, res) {
     const { task_id } = req.params;
 
     const { user_id } = req.body;
+
+    if (!user_id) {
+      return res.status(400).json({
+        error: "'user_id' body param is required.",
+      });
+    }
 
     try {
       const result = await Task.update(
@@ -212,6 +212,9 @@ module.exports = {
             ended_at: {
               [Op.is]: null,
             },
+            user_id: {
+              [Op.is]: null,
+            },
           },
         }
       );
@@ -219,7 +222,7 @@ module.exports = {
       return result[0]
         ? res.send()
         : res.status(404).json({
-            error: "task not found or already finished",
+            error: "task not found or already taken",
           });
     } catch (error) {
       console.log(error);
@@ -230,13 +233,13 @@ module.exports = {
   },
 
   /**
-   * Ends a task.
+   * Ends the user (logged in) task.
    * Can't end a task not yet started or without a user.
-   * if the user logged in is a AGENT, then he cannot close a task for another user.
-   * Otherwise, an ADMIN can close a task for any user.
    */
   async checkout(req, res) {
     const { task_id } = req.params;
+
+    const { user_id } = req.body;
 
     try {
       const result = await Task.update(
@@ -244,9 +247,7 @@ module.exports = {
         {
           where: {
             id: task_id,
-            user_id: {
-              [Op.not]: null,
-            },
+            user_id,
             started_at: {
               [Op.not]: null,
             },
