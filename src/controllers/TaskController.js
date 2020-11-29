@@ -1,5 +1,6 @@
 const { Op } = require("sequelize");
 const Task = require("../models/Task");
+const User = require("../models/User");
 
 // tasks (description, user, status (OPEN, IN_PROGRESS, DONE), started_at, ended_at, created_at)
 
@@ -31,7 +32,7 @@ module.exports = {
       }
     }
 
-    const orderOptions = [];
+    let orderOptions = [];
 
     if (order) {
       let orderValues = [];
@@ -61,6 +62,21 @@ module.exports = {
         });
       }
     }
+
+    const orderUser = [];
+    orderOptions.forEach((el) => {
+      if (JSON.stringify(el).includes("user")) {
+        orderUser.push(el);
+      }
+    });
+
+    orderOptions = orderOptions.filter(
+      (el) => !JSON.stringify(el).includes("user")
+    );
+
+    orderUser.forEach((el) => {
+      orderOptions.push([{ model: User, as: "User" }, ...el]);
+    });
 
     try {
       const tasks = await Task.findAll({
