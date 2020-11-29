@@ -75,20 +75,26 @@ module.exports = {
     );
 
     orderUser.forEach((el) => {
-      orderOptions.push([{ model: User, as: "User" }, ...el]);
+      const elementValue = el[0].split(".")[1].replace("'", "");
+      const elementOrder = el[1] ? el[1] : "ASC";
+      orderOptions.push([
+        { model: User, as: "user" },
+        elementValue,
+        elementOrder,
+      ]);
     });
 
     try {
       const tasks = await Task.findAll({
         attributes: { exclude: ["id", "createdAt", "updatedAt", "user_id"] },
         where: options,
-        order: orderOptions,
         include: [
           {
             association: "user",
             attributes: ["name", "email"],
           },
         ],
+        order: orderOptions,
       });
 
       return res.json(tasks);
@@ -185,6 +191,13 @@ module.exports = {
     }
   },
 
+  /**
+   * Assign a user to a task and starts it.
+   * Replaces the user and reset "started_at" if already started.
+   * Can't start a task already ended.
+   * If the user logged in is a ADMIN, then he can assign any user to the task.
+   * Otherwise, an AGENT can only assign himself to the task.
+   */
   async checkin(req, res) {
     const { task_id } = req.params;
 
@@ -192,10 +205,51 @@ module.exports = {
 
     try {
       const result = await Task.update(
-        { user_id },
+        { user_id, started_at: new Date(), status: "IN_PROGRESS" },
         {
           where: {
             id: task_id,
+            ended_at: {
+              [Op.is]: null,
+            },
+          },
+        }
+      );
+
+      return result[0]
+        ? res.send()
+        : res.status(404).json({
+            error: "task not found or already finished",
+          });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        error: "failed to check-in",
+      });
+    }
+  },
+
+  /**
+   * Ends a task.
+   * Can't end a task not yet started or without a user.
+   * if the user logged in is a AGENT, then he cannot close a task for another user.
+   * Otherwise, an ADMIN can close a task for any user.
+   */
+  async checkout(req, res) {
+    const { task_id } = req.params;
+
+    try {
+      const result = await Task.update(
+        { ended_at: new Date(), status: "DONE" },
+        {
+          where: {
+            id: task_id,
+            user_id: {
+              [Op.not]: null,
+            },
+            started_at: {
+              [Op.not]: null,
+            },
           },
         }
       );

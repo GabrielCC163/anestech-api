@@ -89,4 +89,7 @@ indicators
 - **Ordering examples:**
 
   **Name:** order | **Value:** -created_at \
-   Returns tasks in **decreasing** order by "created_at" (notice the **"-"** sign before).
+   Returns tasks in **descending** order by "created_at" (notice the **"-"** sign before).
+
+  **Name:** order | **Value:** -user.created_at,user.name \
+  Returns tasks in **descending** order by "user.created_at" and **ascending** order by user.name, as long as the task is linked to a user.
