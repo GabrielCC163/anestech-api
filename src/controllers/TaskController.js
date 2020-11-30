@@ -2,14 +2,6 @@ const { Op } = require("sequelize");
 const Task = require("../models/Task");
 const User = require("../models/User");
 
-// tasks (description, user, status (OPEN, IN_PROGRESS, DONE), started_at, ended_at, created_at)
-
-//     crud
-//         read filter: description, status[] = OK
-//         read order: user, status, created_at
-//     checkin
-//     checkout
-
 module.exports = {
   async index(req, res) {
     const { description, status, order } = req.query;

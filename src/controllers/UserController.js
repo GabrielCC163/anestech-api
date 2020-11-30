@@ -1,5 +1,6 @@
 const Task = require("../models/Task");
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
 
 module.exports = {
   async index(req, res) {
@@ -55,7 +56,14 @@ module.exports = {
 
   async update(req, res) {
     const { user_id } = req.params;
-    const { name, email, role } = req.body;
+    const { name, email, role, password } = req.body;
+
+    if (!name && !email && !role && !password) {
+      return res.status(400).json({
+        message:
+          "No body data passed. Try 'name', 'email', 'role' or 'password'",
+      });
+    }
 
     if (role && role !== "AGENT" && role !== "ADMIN") {
       return res
@@ -64,7 +72,7 @@ module.exports = {
     }
 
     try {
-      const result = await User.update(
+      let result = await User.update(
         { name, email, role },
         {
           where: {
@@ -72,6 +80,18 @@ module.exports = {
           },
         }
       );
+
+      if (password) {
+        const passwordHash = await bcrypt.hash(password, 10);
+        result = await User.update(
+          { password: passwordHash },
+          {
+            where: {
+              id: user_id,
+            },
+          }
+        );
+      }
 
       return result[0]
         ? res.send()

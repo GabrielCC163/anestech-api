@@ -64,7 +64,7 @@ indicators
 
 - Execute the migrations for creating the users and tasks tables.
   ```bash
-  $ yarn sequelize db:migrate
+    $ yarn sequelize db:migrate
   ```
 - Execute the seeder for creating an **ADMIN USER**:
 
@@ -72,16 +72,63 @@ indicators
     $ yarn sequelize db:seed:all
   ```
 
-- Start the API
+- Starts the API on **localhost:3333**
   ```bash
-  $ yarn start
+    $ yarn start
   ```
 
 ### **REQUESTS DETAILED EXAMPLES**
 
+<hr>
+
 ### Auth
 
+#### **<u>Register :: POST /siginup</u>** - Creates a new user
+
+- admin role: can do all operations
+- agent role: can only create, list and update tasks.
+
+Body param example ("role" accepts "agent" and "admin"):
+
+```json
+{
+  "name": "Gabriel Brum",
+  "email": "gbrum@gmail.com",
+  "password": "123456",
+  "role": "agent"
+}
+```
+
+Returns new user information and the TOKEN **(use it as Bearer token over all following requests)**.
+
+#### **<u>Login :: POST /signin</u>** - Login a user **(REQUIRED)**
+
+Body param example (admin user info):
+
+```json
+{
+  "email": "admin@admin.com",
+  "password": "123456"
+}
+```
+
+Returns user information and the TOKEN **(use it as Bearer token over all following requests)**.
+
+<hr>
+
 ### Users
+
+#### **<u>Index :: GET /users</u>** - Returns all registered users.
+
+#### **<u>Show :: GET /users/:user_id</u>** - Returns all data for a specific user.
+
+#### **<u>Tasks :: GET /users/:user_id/tasks</u>** - Returns all user tasks
+
+#### **<u>Update :: PUT /users/:user_id</u>** - Updates user name, email, role and password.
+
+#### **<u></u>**
+
+<hr>
 
 ### Tasks
 

@@ -28,8 +28,6 @@ module.exports = {
     try {
       const token = req.headers.authorization.split(" ")[1];
       jwt.verify(token, process.env.SECRET_KEY, function (err, decoded) {
-        console.log(decoded.id);
-        console.log(req.body.user_id);
         if (decoded && String(decoded.id) === req.body.user_id) {
           return next();
         } else {
@@ -50,12 +48,9 @@ module.exports = {
       const token = req.headers.authorization.split(" ")[1];
       jwt.verify(token, process.env.SECRET_KEY, async function (err, decoded) {
         if (decoded && decoded.id) {
-          const { role } = await User.findByPk(decoded.id, {
-            attributes: {
-              include: ["role"],
-            },
-          });
-          if (role === "admin") {
+          const user = await User.findByPk(decoded.id);
+
+          if (user && user.role === "admin") {
             return next();
           } else {
             return res.status(401).json({

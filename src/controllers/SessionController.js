@@ -53,7 +53,7 @@ module.exports = {
       const { email, password } = req.body;
 
       let userObj = await User.findOne({
-        email,
+        where: { email },
       });
 
       let { id } = userObj;
