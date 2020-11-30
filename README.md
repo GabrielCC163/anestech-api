@@ -1,44 +1,3 @@
-docker-compose up
-
-tasks (description, user, status (OPEN, IN_PROGRESS, DONE), started_at, ended_at, created_at)
-
-    crud
-        read filter: description, status[]
-        read order: user, status, created_at
-    checkin
-    checkout
-
-roles
-
-    admin
-        can: crud users, read indications, crud tasks
-
-    agent
-        can: create and update tasks
-
-users (name, email, role, \*password)
-
-    crud (only by admin users)
-        inserted: superadmin*
-
-indicators
-
-    filters: dt_start, dt_end
-    -> number of ended tasks
-       -> 50
-    -> avg of tasks ended by user
-       -> userX, avg
-       -> userY, avg
-       ...
-    -> avg time spent between OPEN and DOING of tasks
-       -> taskX, avg
-       -> taskY, avg
-       ...
-    -> avg time spent between DOING and DONE of tasks.
-       -> taskX, avg
-       -> taskY, avg
-       ...
-
 # Anestech - Task Management API
 
 ## Local requirements
@@ -76,6 +35,10 @@ indicators
   ```bash
     $ yarn start
   ```
+
+### Run the requests
+
+[![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=anestech-api&uri=https%3A%2F%2Fgist.githubusercontent.com%2FGabrielCC163%2F3be9b58a494a2dcee71c1e44df40e75c%2Fraw%2Fbc1842915525d9317a869ead8aae8beb5c5abe54%2Fanestech-api-requests.json)
 
 ### **REQUESTS DETAILED EXAMPLES**
 
@@ -195,3 +158,22 @@ Body param example:
 ```
 
 #### **<u>Remove :: DELETE /tasks/:task_id</u>** - Remove a task
+
+<hr>
+
+### Indicators
+
+**<i>Query params:</i>**
+
+- **Filter examples:**
+
+  **Name:** started_at | **Value:** 2020-01-01 10:00:00 \
+  **Name:** ended_at | **Value:** 2020-02-01 23:00:00
+
+#### **<u>Number of completed tasks :: GET /indicators/qt-completed-tasks</u>**
+
+#### **<u>Number of completed tasks by user :: GET /indicators/qt-completed-tasks-by-user</u>**
+
+#### **<u>Time between OPEN and IN_PROGRESS :: GET /indicators/time-between-open-inprogress</u>**
+
+#### **<u>Time between IN_PROGRESS and DONE :: GET /indicators/time-between-inprogress-done</u>**

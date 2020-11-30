@@ -9,6 +9,7 @@ const {
   ensureUserAdmin,
   ensureCorrectUser,
 } = require("./middleware/auth");
+const IndicatorsController = require("./controllers/IndicatorsController");
 
 const routes = express.Router();
 
@@ -59,5 +60,33 @@ routes.patch(
 
 routes.post("/signup", SessionController.signup);
 routes.post("/signin", SessionController.signin);
+
+routes.get(
+  "/indicators/qt-completed-tasks",
+  loginRequired,
+  ensureUserAdmin,
+  IndicatorsController.qtCompletedTasks
+);
+
+routes.get(
+  "/indicators/qt-completed-tasks-by-user",
+  loginRequired,
+  ensureUserAdmin,
+  IndicatorsController.qtCompletedTasksByUser
+);
+
+routes.get(
+  "/indicators/time-between-open-inprogress",
+  loginRequired,
+  ensureUserAdmin,
+  IndicatorsController.timeBetweenOpenAndInProgress
+);
+
+routes.get(
+  "/indicators/time-between-inprogress-done",
+  loginRequired,
+  ensureUserAdmin,
+  IndicatorsController.timeBetweenInProgressAndDone
+);
 
 module.exports = routes;
