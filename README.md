@@ -46,7 +46,7 @@
 
 ### Auth
 
-#### **<u>Register :: POST /signup</u>** - Creates a user
+#### **<u>Register :: POST /signup</u>** - Creates a user.
 
 - admin role: can do all operations
 - agent role: can only create, list and update tasks.
@@ -64,7 +64,7 @@ Body param example ("role" accepts "agent" and "admin"):
 
 Returns new user information and the TOKEN **(use it as Bearer token over all following requests)**.
 
-#### **<u>Login :: POST /signin</u>** - Login a user **(REQUIRED)**
+#### **<u>Login :: POST /signin</u>** - Login a user **(REQUIRED)**.
 
 Body param example (admin user info):
 
@@ -85,17 +85,17 @@ Returns user information and the TOKEN **(use it as Bearer token over all follow
 
 #### **<u>Show :: GET /users/:user_id</u>** - Returns all data for a specific user.
 
-#### **<u>Tasks :: GET /users/:user_id/tasks</u>** - Returns all user tasks
+#### **<u>Tasks :: GET /users/:user_id/tasks</u>** - Returns all user tasks.
 
 #### **<u>Update :: PUT /users/:user_id</u>** - Updates user name, email, role and password.
 
-#### **<u>Remove :: DELETE /users/:user_id</u>** - Remove a user
+#### **<u>Remove :: DELETE /users/:user_id</u>** - Remove a user.
 
 <hr>
 
 ### Tasks
 
-#### **<u>Create :: POST /tasks</u>** - Creates a task with status OPEN, without user_id, started_at and ended_at
+#### **<u>Create :: POST /tasks</u>** - Creates a task with status OPEN, without user_id, started_at and ended_at.
 
 Body param example:
 
@@ -105,7 +105,7 @@ Body param example:
 }
 ```
 
-#### **<u>Index :: GET /tasks</u>** - Returns all tasks
+#### **<u>Index :: GET /tasks</u>** - Returns all tasks.
 
 **<i>Query params:</i>**
 
@@ -127,7 +127,7 @@ Body param example:
 
 #### **<u>Show :: GET /tasks/:task_id </u>** - Returns all data for a specific task.
 
-#### **<u>Update :: PUT /tasks/:task_id </u>** - Updates task description, status, user_id, started_at and ended_at
+#### **<u>Update :: PUT /tasks/:task_id </u>** - Updates task description, status, user_id, started_at and ended_at.
 
 Body param example:
 
@@ -157,7 +157,7 @@ Body param example:
 }
 ```
 
-#### **<u>Remove :: DELETE /tasks/:task_id</u>** - Remove a task
+#### **<u>Remove :: DELETE /tasks/:task_id</u>** - Remove a task.
 
 <hr>
 
