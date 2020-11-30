@@ -36,6 +36,7 @@ routes.delete(
 routes.post("/tasks", loginRequired, TaskController.store);
 routes.get("/tasks/:task_id", loginRequired, TaskController.show);
 routes.get("/tasks", loginRequired, TaskController.index);
+routes.put("/tasks/:task_id", loginRequired, TaskController.update);
 routes.delete(
   "/tasks/:task_id",
   loginRequired,

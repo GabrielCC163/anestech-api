@@ -28,7 +28,7 @@ module.exports = {
     try {
       const token = req.headers.authorization.split(" ")[1];
       jwt.verify(token, process.env.SECRET_KEY, function (err, decoded) {
-        if (decoded && String(decoded.id) === req.body.user_id) {
+        if (decoded && String(decoded.id) === String(req.body.user_id)) {
           return next();
         } else {
           return res.status(401).json({

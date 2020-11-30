@@ -181,7 +181,7 @@ module.exports = {
   },
 
   /**
-   * Assign a user (must be logged in) to a task and starts it.
+   * Assigns a user (must be logged in) to a task and starts it.
    * Can't start a task already ended or assigned to a user.
    */
   async checkin(req, res) {
@@ -232,6 +232,12 @@ module.exports = {
     const { task_id } = req.params;
 
     const { user_id } = req.body;
+
+    if (!user_id) {
+      return res.status(400).json({
+        error: "'user_id' body param is required.",
+      });
+    }
 
     try {
       const result = await Task.update(

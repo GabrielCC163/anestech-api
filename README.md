@@ -50,7 +50,7 @@ indicators
 - Clone the repository, install the dependencies and set up .env file:
 
   ```bash
-    $ git clone
+    $ git clone https://github.com/GabrielCC163/anestech-api.git
     $ cd anestech-api
     $ yarn install
     $ mv .env-sample .env
@@ -83,7 +83,7 @@ indicators
 
 ### Auth
 
-#### **<u>Register :: POST /siginup</u>** - Creates a new user
+#### **<u>Register :: POST /signup</u>** - Creates a user
 
 - admin role: can do all operations
 - agent role: can only create, list and update tasks.
@@ -126,13 +126,23 @@ Returns user information and the TOKEN **(use it as Bearer token over all follow
 
 #### **<u>Update :: PUT /users/:user_id</u>** - Updates user name, email, role and password.
 
-#### **<u></u>**
+#### **<u>Remove :: DELETE /users/:user_id</u>** - Remove a user
 
 <hr>
 
 ### Tasks
 
-#### **<u>Index :: /tasks</u>**
+#### **<u>Create :: POST /tasks</u>** - Creates a task with status OPEN, without user_id, started_at and ended_at
+
+Body param example:
+
+```JSON
+{
+  "description": "create api with sequelize"
+}
+```
+
+#### **<u>Index :: GET /tasks</u>** - Returns all tasks
 
 **<i>Query params:</i>**
 
@@ -151,3 +161,37 @@ Returns user information and the TOKEN **(use it as Bearer token over all follow
 
   **Name:** order | **Value:** -user.created_at,user.name \
   Returns tasks in **descending** order by "user.created_at" and **ascending** order by user.name, as long as the task is linked to a user.
+
+#### **<u>Show :: GET /tasks/:task_id </u>** - Returns all data for a specific task.
+
+#### **<u>Update :: PUT /tasks/:task_id </u>** - Updates task description, status, user_id, started_at and ended_at
+
+Body param example:
+
+```JSON
+{
+  "description": "create api with postgresql"
+}
+```
+
+#### **<u>Check-in :: PATCH /tasks/:task_id/checkin</u>** - Assigns a user to a task and initializes it (user_id must be the same as the logged user id). Sets the status to IN_PROGRESS.
+
+Body param example:
+
+```JSON
+{
+  "user_id": "1"
+}
+```
+
+#### **<u>Check-out :: PATCH /tasks/:task_id/checkout</u>** - Ends a task (user_id must be the same as the logged user id). Sets the status to DONE.
+
+Body param example:
+
+```JSON
+{
+  "user_id": "1"
+}
+```
+
+#### **<u>Remove :: DELETE /tasks/:task_id</u>** - Remove a task
