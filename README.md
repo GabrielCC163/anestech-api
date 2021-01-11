@@ -112,7 +112,7 @@ Body param example:
 - **Filter examples:**
 
   **Name:** description | **Value:** learn node \
-   Returns every task that **contains** "study node" in its description.
+   Returns every task that **contains** "learn node" in its description.
 
   **Name:** status | **Value:** OPEN,IN_PROGRESS \
   Returns every task that either has "OPEN" **or** "IN_PROGRESS" status.
